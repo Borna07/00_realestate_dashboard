@@ -5,28 +5,6 @@ from django.db.models import Avg, Count, Max, Sum
 from collections import defaultdict
 from django.core.serializers.json import DjangoJSONEncoder
 import json
-# def zagreb_sale_data(request):
-#     # Query SaleDataset for Zagreb data
-#     datasets = SaleDataset.objects.filter(city__name="Zagreb").values('calendar_week').annotate(
-#         average_price=Avg('average_price'),
-#         average_price_per_sqm=Avg('average_price_per_sqm'),
-#         total_raw=Sum('total_raw'),
-#         total_clean_entries=Sum('total_clean_entries'),
-#         highest_price=Max('highest_price')
-#     ).order_by('calendar_week')
-
-#     # Preparing data for Chart.js with Decimal conversion
-#     context = {
-#         'weeks': [dataset['calendar_week'] for dataset in datasets],
-#         'average_prices': [float(dataset['average_price']) if dataset['average_price'] is not None else 0 for dataset in datasets],
-#         'average_prices_sqm': [float(dataset['average_price_per_sqm']) if dataset['average_price_per_sqm'] is not None else 0 for dataset in datasets],
-#         'total_raw_data': [dataset['total_raw'] if dataset['total_raw'] is not None else 0 for dataset in datasets],
-#         'total_clean_entries': [dataset['total_clean_entries'] if dataset['total_clean_entries'] is not None else 0 for dataset in datasets],
-#         'highest_prices': [float(dataset['highest_price']) if dataset['highest_price'] is not None else 0 for dataset in datasets],
-#     }
-
-#     return render(request, 'zagreb_sale_data.html', context)
-
 
 
 def zagreb_sale_data(request):
