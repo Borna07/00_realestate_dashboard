@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rijeka Sale Data</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .chart-container {
+            padding: 20px;
+        }
+
+        .chart-card {
+            margin-bottom: 20px;
+        }
+
+        .chart-card .card-body {
+            height: 400px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="container-fluid">
+        <h1 class="text-center my-4">Rijeka Sale Data</h1>
+        <div class="row">
+            <div class="col-lg-6 chart-container">
+                <div class="card chart-card">
+                    <div class="card-body">
+                        <canvas id="average_priceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 chart-container">
+                <div class="card chart-card">
+                    <div class="card-body">
+                        <canvas id="average_price_per_sqmChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 chart-container">
+                <div class="card chart-card">
+                    <div class="card-body">
+                        <canvas id="total_rawChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 chart-container">
+                <div class="card chart-card">
+                    <div class="card-body">
+                        <canvas id="total_clean_entriesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function createChart(chartId, datasets) {
+            new Chart(document.getElementById(chartId), {
+                type: 'line',
+                data: {
+                    datasets: datasets
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            ticks: {
+                                stepSize: 1,
+                                beginAtZero: false,
+                                callback: function(value) {
+                                    return "Week " + value;
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = function() {
+            var dataByYearJson = '{{ data_by_year_json|safe }}';
+            var dataByYear = JSON.parse(dataByYearJson);
+            var colors = ['red', 'blue', 'green', 'yellow']; // Define more colors as needed
+
+            Object.keys(dataByYear).forEach(function(key) {
+                var datasets = Object.keys(dataByYear[key]).map(function(year, index) {
+                    var color = colors[index % colors.length];
+                    var data = dataByYear[key][year].map(function(item) {
+                        return {x: item.week, y: item.value};
+                    });
+                    return {
+                        label: year + ' ' + key.replace(/_/g, ' ').toUpperCase(),
+                        data: data,
+                        borderColor: color,
+                        backgroundColor: color,
+                        fill: false
+                    };
+                });
+
+                var chartId = key + 'Chart';
+                console.log(chartId)
+                createChart(chartId, datasets);
+            });
+        }
+    </script>
+</body>
+</html>

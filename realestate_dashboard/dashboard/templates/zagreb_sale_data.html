@@ -1,0 +1,60 @@
+<head>
+    <!-- Other head elements -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<div style="width: 600px;">
+    <canvas id="averagePriceChart"></canvas>
+    <canvas id="averagePricePerSqmChart"></canvas>
+    <canvas id="totalRawChart"></canvas>
+    <canvas id="totalCleanEntriesChart"></canvas>
+    <canvas id="highestPriceChart"></canvas>
+</div>
+
+<script>
+    function createChart(chartId, datasets) {
+        new Chart(document.getElementById(chartId), {
+            type: 'line',
+            data: {
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    window.onload = function() {
+        var dataByYearJson = '{{ data_by_year_json|safe }}';
+        var dataByYear = JSON.parse(dataByYearJson);
+        var colors = ['red', 'blue', 'green', 'yellow', 'purple']; // Define more colors as needed
+
+
+        // Function to process data for each chart
+        function processData(key) {
+            var datasets = [];
+            Object.keys(dataByYear[key]).forEach(function(year, index) {
+                var color = colors[index % colors.length];
+                var data = dataByYear[key][year].map(function(item) { return {x: item[0], y: item[1]}; });
+                datasets.push({
+                    label: key.replace('_', ' ').toUpperCase() + ' ' + year,
+                    data: data,
+                    borderColor: color,
+                    backgroundColor: color,
+                    fill: false
+                });
+            });
+            return datasets;
+        }
+
+        // Creating each chart
+        createChart('averagePriceChart', processData('average_prices'));
+        createChart('averagePricePerSqmChart', processData('average_prices_sqm'));
+        createChart('totalRawChart', processData('total_raw_data'));
+        createChart('totalCleanEntriesChart', processData('total_clean_entries'));
+        createChart('highestPriceChart', processData('highest_prices'));
+    }
+</script>
